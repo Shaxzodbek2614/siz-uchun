@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#210a10">
+<meta name="robots" content="noindex, nofollow, noimageindex">
+<title>Faqat siz uchun</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wine:#4a1722; --wine-deep:#210a10; --wine-soft:#6d2b38;
+  --cream:#f8f0e7; --paper:#fcf7f0; --blush:#eccfc9; --rose:#d49a9a;
+  --gold:#d2ab78; --gold-soft:#ecd6b0; --ink:#3a2226;
+  --serif:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
+  --script:"Great Vibes","Snell Roundhand","Apple Chancery",cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--wine-deep);color:var(--cream);
+  font-family:var(--serif);font-size:19px;line-height:1.5;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+body.locked{overflow:hidden;height:100svh}
+main{max-width:480px;margin:0 auto;position:relative;overflow:hidden;box-shadow:0 0 120px rgba(0,0,0,.6)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+#petals{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:150}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:160;overflow:hidden}
+#fx .h{position:absolute;display:block;will-change:transform,opacity}
+#fx .h svg{display:block;width:100%;height:100%}
+
+/* ───────── Konvert (kirish) ───────── */
+#gate{
+  position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:44px;padding:24px;
+  background:radial-gradient(120% 90% at 50% 20%,#6d2b38 0%,#3a121b 48%,#210a10 100%);
+  transition:opacity .9s ease .1s,visibility 0s linear 1s,transform 1s ease;
+}
+#gate.gone{opacity:0;visibility:hidden;transform:scale(1.08)}
+.gate-title{text-align:center;animation:fadeUp 1.2s ease both .2s}
+.gate-title .s{font-family:var(--script);font-size:46px;line-height:1.1;color:var(--gold-soft)}
+.gate-title .t{margin-top:10px;font-size:13px;letter-spacing:.38em;text-transform:uppercase;color:var(--rose)}
+.env{
+  position:relative;width:min(74vw,290px);aspect-ratio:29/19;display:block;
+  perspective:900px;animation:fadeUp 1.2s ease both .5s,bob 4s ease-in-out infinite 1.7s;
+  filter:drop-shadow(0 26px 40px rgba(0,0,0,.45));
+}
+.env>*{position:absolute;left:0;width:100%}
+.env-back{inset:0;background:#e9d4c4;border-radius:10px}
+.env-letter{
+  bottom:6%;left:6%;width:88%;height:84%;background:var(--paper);border-radius:8px;
+  display:grid;place-items:center;text-align:center;color:var(--wine);
+  font-family:var(--script);font-size:30px;line-height:1.05;
+  transition:transform 1s cubic-bezier(.2,.8,.2,1) .55s;
+  box-shadow:0 2px 10px rgba(0,0,0,.12);
+}
+.env-front{
+  inset:0;border-radius:10px;
+  background:linear-gradient(180deg,#f6e7da,#ecd6c6);
+  clip-path:polygon(0 0,50% 52%,100% 0,100% 100%,0 100%);
+}
+.env-front::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,0,0,.06),transparent 40%,transparent 60%,rgba(0,0,0,.06));
+}
+.env-flap{
+  top:0;height:58%;transform-origin:50% 0;z-index:3;
+  background:linear-gradient(180deg,#f9ecdf,#e8cfbd);
+  clip-path:polygon(0 0,100% 0,50% 100%);border-radius:10px 10px 0 0;
+  transition:transform .7s cubic-bezier(.5,0,.2,1),z-index 0s linear .35s;
+}
+.seal{
+  left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;z-index:4;
+  border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,#a8404f,#6a1d2b 70%);
+  box-shadow:0 4px 12px rgba(0,0,0,.35),inset 0 0 0 3px rgba(255,255,255,.08);
+  animation:pulse 1.8s ease-in-out infinite;transition:opacity .35s,transform .35s;
+}
+.seal svg{width:22px;height:22px;fill:var(--gold-soft)}
+#gate.open .env{animation:none;opacity:1}
+#gate.open .gate-title{animation:none;opacity:0;transition:opacity .45s ease}
+#gate.open .seal{opacity:0;transform:scale(1.6)}
+#gate.open .env-flap{transform:rotateX(180deg);z-index:-1}
+#gate.open .env-letter{transform:translateY(-62%)}
+.gate-hint{
+  font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);
+  animation:fadeUp 1.2s ease both .9s,blink 2.4s ease-in-out infinite 2.2s;
+}
+#gate.open .gate-hint{opacity:0;animation:none;transition:opacity .3s}
+
+/* ───────── Umumiy ───────── */
+section{position:relative;padding:76px 26px}
+.eyebrow{font-size:12.5px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold)}
+.script{font-family:var(--script);font-weight:400;line-height:1.08}
+.orn{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--gold);margin:0 auto}
+.orn i{display:block;height:1px;width:56px;background:linear-gradient(90deg,transparent,currentColor)}
+.orn i:last-child{transform:scaleX(-1)}
+.orn svg{width:12px;height:12px;fill:currentColor}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1s ease,transform 1s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ───────── Hero ───────── */
+.hero{
+  min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:56px 26px 92px;
+  background:radial-gradient(120% 70% at 50% 0%,#743042 0%,#3d131d 46%,#210a10 100%);
+}
+.hero .rise{opacity:0;transform:translateY(30px)}
+body.opened .hero .rise{animation:fadeUp 1.3s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--o,0)*.22s + .5s)}
+.frame-wrap{position:relative;width:min(66vw,292px);margin:30px auto 34px}
+.frame{
+  position:relative;aspect-ratio:3/4;overflow:hidden;
+  border-radius:50% 50% 16px 16px/37.5% 37.5% 16px 16px;
+  box-shadow:0 34px 70px rgba(0,0,0,.55),0 0 0 1px rgba(210,171,120,.35),0 0 90px rgba(212,154,154,.22);
+  background:linear-gradient(160deg,#7a3545,#3a121b);
+  animation:floaty 6s ease-in-out infinite;
+}
+.frame img{width:100%;height:100%;object-fit:cover;object-position:50% 38%;display:block;animation:kb 16s ease-in-out infinite alternate}
+.frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(33,10,16,.45));pointer-events:none}
+.ring{
+  position:absolute;inset:-12px;pointer-events:none;
+  border:1px solid rgba(210,171,120,.55);
+  border-radius:50% 50% 24px 24px/37.5% 37.5% 24px 24px;
+  animation:floaty 6s ease-in-out infinite .25s;
+}
+.badge{position:absolute;right:-26px;bottom:-22px;width:98px;height:98px;z-index:2}
+.badge .spin{width:100%;height:100%;animation:spin 16s linear infinite}
+.badge circle.bg{fill:#2a0d14;stroke:rgba(210,171,120,.5);stroke-width:.6}
+.badge text{font-family:var(--serif);font-size:9.6px;font-weight:600;fill:var(--gold-soft);letter-spacing:.5px}
+.badge .heart{position:absolute;inset:0;margin:auto;width:24px;height:24px;fill:var(--rose);animation:pulse 1.6s ease-in-out infinite}
+.spark{position:absolute;width:14px;height:14px;background:var(--gold-soft);
+  clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);
+  animation:twinkle 2.6s ease-in-out infinite;opacity:0}
+.hero h1{font-size:clamp(50px,15vw,66px);color:var(--cream);text-shadow:0 4px 30px rgba(212,154,154,.35)}
+.hero .sub{margin:14px auto 0;max-width:290px;font-style:italic;font-size:18.5px;color:var(--blush);opacity:.92}
+.scroll-hint{position:absolute;bottom:24px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-size:10.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);opacity:0}
+body.opened .scroll-hint{animation:fadeIn 1.2s ease both 2.6s}
+.scroll-hint i{display:block;width:1px;height:34px;background:linear-gradient(var(--gold),transparent);animation:drip 2s ease-in-out infinite;transform-origin:top}
+
+/* ───────── So'zlar ───────── */
+.words{background:linear-gradient(#210a10,#2c0e16);text-align:center;padding:96px 30px 132px}
+.words p{font-size:clamp(27px,7.6vw,33px);line-height:1.32;font-weight:500;color:var(--cream)}
+.words p+p{margin-top:.5em}
+.words .w{display:inline-block;opacity:0;transform:translateY(.55em);filter:blur(6px);
+  transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1),filter .8s ease;transition-delay:calc(var(--i)*70ms)}
+.words .in .w{opacity:1;transform:none;filter:none}
+.words .accent{margin-top:44px;font-family:var(--script);font-size:clamp(46px,13.5vw,58px);line-height:1.1;font-weight:400;color:var(--gold-soft)}
+.words .orn{margin-top:40px}
+
+/* ───────── Kartalar ───────── */
+.cards{background:var(--cream);color:var(--ink);border-radius:38px 38px 0 0;margin-top:-38px;text-align:center;padding:66px 0 84px;z-index:1}
+.cards .eyebrow{color:#a9783f}
+.cards h2{font-size:54px;color:var(--wine);margin-top:8px}
+.deck{position:relative;height:404px;margin:38px auto 0;width:100%}
+.card{
+  position:absolute;left:12%;top:0;width:76%;height:330px;border-radius:28px;padding:26px 26px 28px;
+  display:flex;flex-direction:column;justify-content:space-between;text-align:left;
+  transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .45s ease;
+  touch-action:pan-y;user-select:none;-webkit-user-select:none;will-change:transform;
+  box-shadow:0 22px 44px rgba(74,23,34,.24);cursor:grab;
+}
+.card.drag{transition:none;cursor:grabbing}
+.card .n{display:flex;justify-content:space-between;align-items:center;font-size:14px;letter-spacing:.3em}
+.card .n svg{width:16px;height:16px;fill:currentColor;opacity:.8}
+.card h3{font-family:var(--script);font-weight:400;font-size:50px;line-height:1.05}
+.card p{font-size:20.5px;font-style:italic;line-height:1.36}
+.card.a{background:linear-gradient(155deg,#743042,#3a121b);color:var(--gold-soft)}
+.card.a p{color:var(--blush)}
+.card.b{background:linear-gradient(155deg,#f4dcd6,#e6bdb8);color:var(--wine)}
+.card.c{background:linear-gradient(155deg,#fffaf3,#f1e2cf);color:var(--wine);box-shadow:0 22px 44px rgba(74,23,34,.2),inset 0 0 0 1px rgba(169,120,63,.45)}
+.card.c .n{color:#a9783f}
+.dots{display:flex;justify-content:center;gap:8px;margin-top:6px}
+.dots i{width:6px;height:6px;border-radius:50%;background:rgba(74,23,34,.22);transition:all .4s ease}
+.dots i.on{width:22px;border-radius:4px;background:var(--wine)}
+.swipe-hint{margin-top:18px;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:#a9783f}
+
+/* ───────── Guldasta ───────── */
+.bloom{background:radial-gradient(110% 70% at 50% 46%,#5b2030 0%,#2c0e16 60%,#210a10 100%);text-align:center;padding:84px 20px 70px;touch-action:manipulation}
+.bloom h2{font-size:54px;color:var(--gold-soft);margin-top:8px}
+.bloom .sub{font-style:italic;color:var(--blush);opacity:.9}
+.bloom svg.bq{display:block;width:min(100%,360px);margin:20px auto 0;overflow:visible}
+.bq path,.bq circle{fill:none;stroke:var(--gold-soft);stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 1.7s ease,fill 1.4s ease;transition-delay:var(--d,0s),calc(var(--d,0s) + 1s)}
+.bq .leaf{stroke:#b9c7a0}
+.bq .core{stroke:var(--gold)}
+.bloom.in .bq path,.bloom.in .bq circle{stroke-dashoffset:0}
+.bloom.in .bq .petal{fill:rgba(236,207,201,.16)}
+.bloom.in .bq .petal.in2{fill:rgba(212,154,154,.26)}
+.bloom.in .bq .leaf{fill:rgba(185,199,160,.14)}
+.bloom.in .bq .core{fill:var(--gold)}
+.bloom.in .bq .bow{fill:rgba(212,154,154,.3)}
+.bq .fl{transform-box:view-box;transform-origin:170px 262px;animation:sway 5.5s ease-in-out infinite}
+.bq .fl:nth-of-type(2){animation-duration:6.5s;animation-direction:reverse}
+.bq .fl:nth-of-type(3){animation-duration:7.2s}
+.tap-hint{margin-top:18px;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);animation:blink 2.4s ease-in-out infinite}
+
+/* ───────── Maktub ───────── */
+.letter{background:linear-gradient(#210a10,#3a121b 70%,#4a1722);padding:60px 24px 110px;text-align:center}
+.paper{
+  position:relative;background:var(--paper);color:var(--ink);text-align:left;
+  border-radius:22px;padding:46px 26px 32px;margin-top:34px;
+  box-shadow:0 30px 60px rgba(0,0,0,.45);transform:rotate(-1.2deg);
+  background-image:repeating-linear-gradient(transparent 0 31px,rgba(169,120,63,.13) 31px 32px);
+  background-position:0 14px;
+}
+.reveal.paper{transform:translateY(26px) rotate(-1.2deg)}
+.reveal.paper.in{transform:rotate(-1.2deg)}
+.paper .wax{position:absolute;top:-24px;left:50%;margin-left:-24px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,#a8404f,#6a1d2b 70%);box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.paper .wax svg{width:19px;height:19px;fill:var(--gold-soft)}
+.paper p{font-size:20px;line-height:32px}
+.paper p+p{margin-top:32px}
+.paper .hi{font-family:var(--script);font-size:38px;color:var(--wine);line-height:32px;margin-bottom:32px}
+.paper .ch{opacity:0;transition:opacity .25s ease}
+.paper .ch.on{opacity:1}
+.paper .sign{margin-top:32px;text-align:right;font-family:var(--script);font-size:32px;line-height:32px;color:var(--wine);opacity:0;transition:opacity 1.2s ease}
+.paper .sign.on{opacity:1}
+.final{margin-top:74px}
+.final .q{font-style:italic;color:var(--blush);font-size:20px;min-height:58px;transition:opacity .5s ease}
+.final .q.big{font-family:var(--script);font-style:normal;font-size:42px;line-height:1.1;color:var(--gold-soft)}
+.heart-btn{position:relative;width:96px;height:96px;border-radius:50%;margin:26px auto 0;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 28%,#e3a3a6,#a8404f 55%,#6a1d2b);
+  box-shadow:0 16px 36px rgba(168,64,79,.5),inset 0 2px 6px rgba(255,255,255,.3);animation:pulse 1.5s ease-in-out infinite;
+  transition:transform .2s ease}
+.heart-btn:active{transform:scale(.92)}
+.heart-btn svg{width:40px;height:40px;fill:#fff7f0;position:relative;z-index:1}
+.heart-btn::before,.heart-btn::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid var(--rose);animation:ripple 2.4s ease-out infinite}
+.heart-btn::after{animation-delay:1.2s}
+.foot{margin-top:70px;font-size:10.5px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);opacity:.65}
+
+/* ───────── Animatsiyalar ───────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{to{opacity:.8}}
+@keyframes bob{50%{transform:translateY(-9px)}}
+@keyframes floaty{50%{transform:translateY(-8px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}14%{transform:scale(1.13)}28%{transform:scale(1)}42%{transform:scale(1.09)}56%{transform:scale(1)}}
+@keyframes blink{50%{opacity:.35}}
+@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.12) translateY(-1.5%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:1;transform:scale(1) rotate(45deg)}}
+@keyframes drip{0%{transform:scaleY(0);opacity:1}60%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
+@keyframes sway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+@keyframes ripple{from{transform:scale(1);opacity:.7}to{transform:scale(1.9);opacity:0}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}
+  .spark{opacity:.8}
+}
+</style>
+</head>
+<body class="locked">
+
+<canvas id="petals" aria-hidden="true"></canvas>
+<div id="fx" aria-hidden="true"></div>
+
+<!-- Konvert -->
+<div id="gate">
+  <div class="gate-title">
+    <div class="s">Sizga maktub bor</div>
+    <div class="t">faqat siz uchun</div>
+  </div>
+  <button class="env" id="env" aria-label="Maktubni ochish">
+    <span class="env-back"></span>
+    <span class="env-letter">Faqat<br>siz uchun</span>
+    <span class="env-front"></span>
+    <span class="env-flap"></span>
+    <span class="seal"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.3 8.300 2 4.500 5.600 4.500c2.100 0 3.500 1.200 4.400 2.600l2 3 2-3c.9-1.400 2.300-2.600 4.400-2.600 3.600 0 5.300 3.800 3.600 7.200C19.500 16.400 12 21 12 21z"/></svg></span>
+  </button>
+  <div class="gate-hint">ochish uchun bosing</div>
+</div>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="eyebrow rise" style="--o:0">faqat siz uchun</div>
+    <div class="frame-wrap rise" style="--o:1">
+      <div class="ring"></div>
+      <div class="frame"><img src="photo.jpg" alt="" id="photo"></div>
+      <span class="spark" style="left:-18px;top:16%;animation-delay:.2s"></span>
+      <span class="spark" style="right:-14px;top:6%;width:10px;height:10px;animation-delay:1.1s"></span>
+      <span class="spark" style="left:6%;bottom:-20px;width:11px;height:11px;animation-delay:1.8s"></span>
+      <span class="spark" style="right:-24px;top:46%;width:9px;height:9px;animation-delay:.7s"></span>
+      <span class="spark" style="left:-26px;top:62%;width:8px;height:8px;animation-delay:2.2s"></span>
+      <div class="badge">
+        <svg class="spin" viewBox="0 0 100 100">
+          <circle class="bg" cx="50" cy="50" r="48"/>
+          <path id="circ" d="M50 50 m-36 0 a36 36 0 1 1 72 0 a36 36 0 1 1 -72 0" fill="none"/>
+          <text><textPath href="#circ" textLength="222">FAQAT SIZ UCHUN  •  FAQAT SIZ UCHUN  •</textPath></text>
+        </svg>
+        <svg class="heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.3 8.300 2 4.500 5.600 4.500c2.100 0 3.500 1.200 4.400 2.600l2 3 2-3c.9-1.400 2.300-2.600 4.400-2.600 3.600 0 5.300 3.800 3.600 7.200C19.500 16.400 12 21 12 21z"/></svg>
+      </div>
+    </div>
+    <h1 class="script rise" style="--o:2" id="heroName">Eng go‘zal qizga</h1>
+    <p class="sub rise" style="--o:3">Bu sahifa dunyoda faqat bir kishi uchun yaratilgan — siz uchun.</p>
+    <div class="scroll-hint"><span>pastga suring</span><i></i></div>
+  </section>
+
+  <!-- So'zlar -->
+  <section class="words">
+    <div class="split">
+      <p>Ba’zi insonlar bor —</p>
+      <p>ular kirib kelganda hamma yoq yorishib ketadi.</p>
+    </div>
+    <div class="accent reveal">Siz aynan shundaysiz</div>
+    <div class="orn reveal"><i></i><svg viewBox="0 0 12 12"><path d="M6 0l2 4 4 2-4 2-2 4-2-4-4-2 4-2z"/></svg><i></i></div>
+  </section>
+
+  <!-- Kartalar -->
+  <section class="cards">
+    <div class="eyebrow reveal">besh haqiqat</div>
+    <h2 class="script reveal">Siz haqingizda</h2>
+    <div class="deck reveal" id="deck"></div>
+    <div class="dots" id="dots"></div>
+    <div class="swipe-hint">kartani suring yoki bosing</div>
+  </section>
+
+  <!-- Guldasta -->
+  <section class="bloom" id="bloom">
+    <div class="eyebrow reveal">hech qachon so‘limaydigan</div>
+    <h2 class="script reveal">Sizga guldasta</h2>
+    <svg class="bq" id="bq" viewBox="0 0 340 320" aria-hidden="true"></svg>
+    <div class="tap-hint">ekranga tegib ko‘ring</div>
+  </section>
+
+  <!-- Maktub -->
+  <section class="letter">
+    <div class="orn reveal"><i></i><svg viewBox="0 0 12 12"><path d="M6 0l2 4 4 2-4 2-2 4-2-4-4-2 4-2z"/></svg><i></i></div>
+    <div class="paper reveal" id="paper">
+      <span class="wax"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.3 8.300 2 4.500 5.600 4.500c2.100 0 3.500 1.200 4.400 2.600l2 3 2-3c.9-1.400 2.300-2.600 4.400-2.600 3.600 0 5.300 3.800 3.600 7.200C19.500 16.400 12 21 12 21z"/></svg></span>
+    </div>
+    <div class="final">
+      <p class="q reveal" id="finalText">Va yana bitta narsa qoldi…</p>
+      <button class="heart-btn" id="heartBtn" aria-label="Yurakni bosing">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.3 8.300 2 4.500 5.600 4.500c2.100 0 3.500 1.200 4.400 2.600l2 3 2-3c.9-1.400 2.300-2.600 4.400-2.600 3.600 0 5.300 3.800 3.600 7.200C19.500 16.400 12 21 12 21z"/></svg>
+      </button>
+    </div>
+    <div class="foot">mehr bilan yaratildi</div>
+  </section>
+</main>
+
+<script>
+/* ═══════════ SOZLAMALAR — shu yerni o'zgartiring ═══════════ */
+const CONFIG = {
+  name: "Odinaxon",   // qizning ismi, masalan "Madina". Bo'sh qolsa "Eng go‘zal qizga" chiqadi
+  from: "",   // maktub ostidagi imzo, masalan "Shaxzod". Bo'sh qolsa imzo ismsiz chiqadi
+  cards: [
+    ["Tabassumingiz", "Eng oddiy kunni ham bayramga aylantira oladi."],
+    ["Nigohingiz",    "Unda butun bir olam yashiringan."],
+    ["Qalbingiz",     "Mehri hammaga yetadigan darajada keng."],
+    ["Nafosatingiz",  "Har bir harakatingizda o‘zgacha bir latofat bor."],
+    ["O‘zingiz",      "Sizga o‘xshagani yo‘q. Bo‘lmaydi ham."]
+  ],
+  letter: [
+    "Bu kichkina sahifa — faqat sizniki. U dunyoda birgina inson uchun yaratilgan.",
+    "Kayfiyatingiz tushgan kuni shu yerga qayting va eslang: siz juda qadrlisiz, juda go‘zalsiz va bu dunyoga juda keraksiz.",
+    "Doim shunday porlab yuring."
+  ],
+  finalText: "Tabassum qiling — u sizga juda yarashadi"
+};
+/* ═══════════════════════════════════════════════════════════ */
+
+const $ = s => document.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const HEART = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7.5-4.6-10-9.3C.3 8.300 2 4.500 5.600 4.500c2.100 0 3.500 1.200 4.400 2.600l2 3 2-3c.9-1.400 2.300-2.600 4.400-2.600 3.600 0 5.300 3.800 3.600 7.200C19.500 16.400 12 21 12 21z"/></svg>';
+const rnd = (a, b) => a + Math.random() * (b - a);
+
+if (CONFIG.name) { $('#heroName').textContent = CONFIG.name; document.title = CONFIG.name + ' uchun'; }
+$('#photo').addEventListener('error', e => e.target.remove());
+
+/* ── Yuraklar otilishi ── */
+const fx = $('#fx'), HC = ['#e3a3a6', '#f4dcd6', '#d2ab78', '#c8576a', '#fff3ea'];
+function burst(x, y, n = 12, spread = 150) {
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement('span'), s = rnd(12, 30);
+    el.className = 'h'; el.innerHTML = HEART;
+    el.style.cssText = `left:${x}px;top:${y}px;width:${s}px;height:${s}px;color:${HC[i % HC.length]}`;
+    fx.appendChild(el);
+    const dx = rnd(-spread, spread), dy = rnd(-spread * 1.7, -spread * .35), r = rnd(-50, 50);
+    el.animate([
+      { transform: 'translate(-50%,-50%) scale(.2)', opacity: 0 },
+      { opacity: 1, offset: .18 },
+      { transform: `translate(calc(-50% + ${dx}px),calc(-50% + ${dy}px)) scale(1) rotate(${r}deg)`, opacity: 0 }
+    ], { duration: rnd(1100, 2100), easing: 'cubic-bezier(.15,.7,.3,1)' }).onfinish = () => el.remove();
+  }
+}
+
+/* ── Konvertni ochish ── */
+const gate = $('#gate');
+function openGate() {
+  if (gate.classList.contains('open')) return;
+  gate.classList.add('open');
+  const r = $('#env').getBoundingClientRect();
+  burst(r.left + r.width / 2, r.top + r.height / 2, 16, 170);
+  setTimeout(() => {
+    gate.classList.add('gone');
+    document.body.classList.remove('locked');
+    document.body.classList.add('opened');
+    scrollTo(0, 0);
+  }, reduce ? 0 : 1750);
+}
+gate.addEventListener('click', openGate);
+
+/* ── Tushayotgan gul barglari ── */
+(function () {
+  const cv = $('#petals'), ctx = cv.getContext('2d');
+  let W, H;
+  const cols = ['#f3d5d0', '#e8b4b4', '#f9e9df', '#d79c9f', '#ecd6b0'];
+  function size() {
+    const d = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+  }
+  const mk = init => ({
+    x: rnd(0, W), y: init ? rnd(0, H) : -20, s: rnd(5, 12), vy: rnd(.35, 1), vx: rnd(-.3, .3),
+    a: rnd(0, 6.28), va: rnd(-.015, .015), ph: rnd(0, 6.28), c: cols[Math.random() * cols.length | 0], o: rnd(.3, .75)
+  });
+  size(); addEventListener('resize', size);
+  if (reduce) return;
+  const P = Array.from({ length: 20 }, () => mk(true));
+  (function draw() {
+    if (!document.hidden) {
+      ctx.clearRect(0, 0, W, H);
+      for (const p of P) {
+        p.ph += .012; p.x += p.vx + Math.sin(p.ph) * .5; p.y += p.vy; p.a += p.va;
+        if (p.y > H + 20 || p.x < -30 || p.x > W + 30) Object.assign(p, mk(false));
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.scale(1, .55 + .45 * Math.sin(p.ph * 2));
+        ctx.globalAlpha = p.o; ctx.fillStyle = p.c; ctx.beginPath(); ctx.moveTo(0, -p.s);
+        ctx.bezierCurveTo(p.s * .9, -p.s * .6, p.s * .7, p.s * .7, 0, p.s);
+        ctx.bezierCurveTo(-p.s * .7, p.s * .7, -p.s * .9, -p.s * .6, 0, -p.s);
+        ctx.fill(); ctx.restore();
+      }
+    }
+    requestAnimationFrame(draw);
+  })();
+})();
+
+/* ── So'zlarni bittalab chiqarish ── */
+document.querySelectorAll('.split p').forEach(p => {
+  const words = p.textContent.trim().split(/\s+/);
+  p.textContent = '';
+  words.forEach((w, i) => {
+    const s = document.createElement('span'); s.className = 'w'; s.style.setProperty('--i', i); s.textContent = w;
+    p.append(s, ' ');
+  });
+  p.classList.add('obs');
+});
+
+/* ── Kartalar ── */
+(function () {
+  const deck = $('#deck'), dots = $('#dots'), kinds = ['a', 'b', 'c'];
+  let cards = CONFIG.cards.map(([t, d], i) => {
+    const c = document.createElement('div');
+    c.className = 'card ' + kinds[i % 3]; c.dataset.i = i;
+    c.innerHTML = `<div class="n"><span>${String(i + 1).padStart(2, '0')} / ${String(CONFIG.cards.length).padStart(2, '0')}</span>${HEART}</div><h3></h3><p></p>`;
+    c.querySelector('h3').textContent = t; c.querySelector('p').textContent = d;
+    deck.appendChild(c); dots.appendChild(document.createElement('i'));
+    return c;
+  });
+  function layout() {
+    cards.forEach((c, i) => {
+      c.style.zIndex = cards.length - i;
+      c.style.opacity = i > 2 ? 0 : 1;
+      c.style.pointerEvents = i ? 'none' : 'auto';
+      const rot = i ? (i % 2 ? -1 : 1) * (2 + i * 1.5) : 0;
+      c.style.transform = `translateY(${i * 27}px) scale(${1 - i * .06}) rotate(${rot}deg)`;
+    });
+    [...dots.children].forEach((d, i) => d.classList.toggle('on', i == cards[0].dataset.i));
+  }
+  function next(c, dir, dy = 0) {
+    c.style.transform = `translate(${dir * 130}vw,${dy}px) rotate(${dir * 28}deg)`;
+    c.style.pointerEvents = 'none';
+    cards.push(cards.shift());
+    setTimeout(layout, 240);
+  }
+  let st = null;
+  deck.addEventListener('pointerdown', e => {
+    const c = e.target.closest('.card'); if (!c || c !== cards[0]) return;
+    st = { c, x: e.clientX, y: e.clientY, dx: 0, dy: 0, id: e.pointerId };
+    c.setPointerCapture(e.pointerId);
+  });
+  deck.addEventListener('pointermove', e => {
+    if (!st || e.pointerId !== st.id) return;
+    st.dx = e.clientX - st.x; st.dy = e.clientY - st.y;
+    if (Math.abs(st.dx) > 6) st.c.classList.add('drag');
+    if (st.c.classList.contains('drag')) st.c.style.transform = `translate(${st.dx}px,${st.dy * .3}px) rotate(${st.dx / 16}deg)`;
+  });
+  function end(e, cancel) {
+    if (!st) return;
+    const { c, dx, dy } = st; st = null; c.classList.remove('drag');
+    const moved = Math.hypot(dx, dy);
+    if (!cancel && Math.abs(dx) > 70) next(c, Math.sign(dx), dy * .3);
+    else if (!cancel && moved < 8) next(c, -1);
+    else layout();
+  }
+  deck.addEventListener('pointerup', e => end(e, false));
+  deck.addEventListener('pointercancel', e => end(e, true));
+  layout();
+})();
+
+/* ── Guldasta (chiziladigan gullar) ── */
+(function () {
+  const svg = $('#bq'), NS = 'http://www.w3.org/2000/svg', TIE = [170, 262];
+  const el = (tag, cls, attrs, d, parent) => {
+    const n = document.createElementNS(NS, tag); n.setAttribute('class', cls); n.setAttribute('pathLength', 1);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    n.style.setProperty('--d', d + 's'); parent.appendChild(n); return n;
+  };
+  const petal = (r, w) => `M0 0C${-w} ${-r * .3} ${-w} ${-r * .92} 0 ${-r}C${w} ${-r * .92} ${w} ${-r * .3} 0 0`;
+  const flowers = [
+    { x: 170, y: 92, r: 50, n: 9, bend: 0, t: .5 },
+    { x: 80, y: 136, r: 38, n: 8, bend: -34, t: 0 },
+    { x: 262, y: 130, r: 40, n: 8, bend: 36, t: .25 },
+    { x: 118, y: 62, r: 26, n: 7, bend: -14, t: .9 },
+    { x: 226, y: 58, r: 27, n: 7, bend: 16, t: 1.1 }
+  ];
+  flowers.forEach((f, fi) => {
+    const g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'fl'); svg.appendChild(g);
+    const cx = (f.x + TIE[0]) / 2 + f.bend, cy = (f.y + TIE[1]) / 2 + 20;
+    el('path', 'stem', { d: `M${TIE[0]} ${TIE[1]}Q${cx} ${cy} ${f.x} ${f.y}` }, f.t, g);
+    if (fi < 3) {
+      const lx = (TIE[0] + 2 * cx + f.x) / 4, ly = (TIE[1] + 2 * cy + f.y) / 4, dir = f.bend >= 0 ? 1 : -1;
+      el('path', 'leaf', { d: 'M0 0C8 -16 30 -18 40 -4C30 8 10 10 0 0', transform: `translate(${lx} ${ly}) rotate(${dir > 0 ? -28 : -152}) scale(${dir > 0 ? 1 : 1} ${dir > 0 ? 1 : -1})` }, f.t + .7, g);
+    }
+    for (let i = 0; i < f.n; i++)
+      el('path', 'petal', { d: petal(f.r, f.r * .3), transform: `translate(${f.x} ${f.y}) rotate(${i * 360 / f.n})` }, f.t + 1 + i * .09, g);
+    for (let i = 0; i < f.n; i++)
+      el('path', 'petal in2', { d: petal(f.r * .56, f.r * .2), transform: `translate(${f.x} ${f.y}) rotate(${(i + .5) * 360 / f.n})` }, f.t + 1.7 + i * .07, g);
+    el('circle', 'core', { cx: f.x, cy: f.y, r: f.r * .13 }, f.t + 2.3, g);
+  });
+  // bog'ich va poyalar
+  [[-22, 54], [0, 58], [22, 54]].forEach(([dx, dy], i) =>
+    el('path', 'stem', { d: `M${TIE[0]} ${TIE[1]}L${TIE[0] + dx} ${TIE[1] + dy}` }, .1 * i, svg));
+  el('path', 'bow', { d: `M${TIE[0]} ${TIE[1]}C${TIE[0] - 34} ${TIE[1] - 26} ${TIE[0] - 44} ${TIE[1] + 12} ${TIE[0]} ${TIE[1]}C${TIE[0] + 34} ${TIE[1] - 26} ${TIE[0] + 44} ${TIE[1] + 12} ${TIE[0]} ${TIE[1]}` }, 2.6, svg);
+  el('path', 'bow', { d: `M${TIE[0]} ${TIE[1]}C${TIE[0] - 10} ${TIE[1] + 18} ${TIE[0] - 22} ${TIE[1] + 30} ${TIE[0] - 26} ${TIE[1] + 40}M${TIE[0]} ${TIE[1]}C${TIE[0] + 10} ${TIE[1] + 18} ${TIE[0] + 22} ${TIE[1] + 30} ${TIE[0] + 26} ${TIE[1] + 40}` }, 3, svg).style.fill = 'none';
+
+  const sec = $('#bloom');
+  sec.addEventListener('pointerdown', e => burst(e.clientX, e.clientY, 9, 110));
+})();
+
+/* ── Maktub ── */
+(function () {
+  const paper = $('#paper'), chars = [];
+  const hi = document.createElement('div'); hi.className = 'hi';
+  hi.textContent = CONFIG.name ? CONFIG.name + ',' : 'Aziz inson,'; paper.appendChild(hi);
+  CONFIG.letter.forEach(t => {
+    const p = document.createElement('p');
+    t.split(/(\s+)/).forEach(tok => {
+      if (/^\s+$/.test(tok)) { p.append(' '); return; }
+      const w = document.createElement('span'); w.style.whiteSpace = 'nowrap';
+      [...tok].forEach(ch => { const s = document.createElement('span'); s.className = 'ch'; s.textContent = ch; w.appendChild(s); chars.push(s); });
+      p.appendChild(w);
+    });
+    paper.appendChild(p);
+  });
+  const sign = document.createElement('div'); sign.className = 'sign';
+  sign.textContent = CONFIG.from ? 'Mehr bilan, ' + CONFIG.from : 'Sizni qadrlaydigan inson';
+  paper.appendChild(sign);
+  paper._type = () => {
+    if (reduce) { chars.forEach(c => c.classList.add('on')); sign.classList.add('on'); return; }
+    let i = 0;
+    const t = setInterval(() => {
+      for (let k = 0; k < 2 && i < chars.length; k++) chars[i++].classList.add('on');
+      if (i >= chars.length) { clearInterval(t); setTimeout(() => sign.classList.add('on'), 300); }
+    }, 42);
+  };
+})();
+
+/* ── Oxirgi yurak ── */
+(function () {
+  const btn = $('#heartBtn'), q = $('#finalText'); let done = false;
+  btn.addEventListener('click', () => {
+    const r = btn.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height / 2, 26, 220);
+    if (!reduce) for (let i = 1; i <= 9; i++)
+      setTimeout(() => burst(rnd(30, innerWidth - 30), rnd(innerHeight * .45, innerHeight), 8, 140), i * 230);
+    if (done) return; done = true;
+    q.style.opacity = 0;
+    setTimeout(() => { q.textContent = CONFIG.finalText; q.classList.add('big'); q.style.opacity = 1; }, 450);
+  });
+})();
+
+/* ── Skrollda paydo bo'lish ── */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add('in'); io.unobserve(e.target);
+  if (e.target.id === 'paper') setTimeout(e.target._type, 600);
+  if (e.target.id === 'bloom' && !reduce) setTimeout(() => {
+    const r = $('#bq').getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) burst(r.left + r.width / 2, r.top + r.height * .35, 14, 150);
+  }, 3600);
+}), { threshold: .3 });
+document.querySelectorAll('.reveal,.obs,#bloom').forEach(n => io.observe(n));
+</script>
+</body>
+</html>
